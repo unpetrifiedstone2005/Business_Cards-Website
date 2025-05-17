@@ -101,4 +101,22 @@ app.put("/delete/:id", async(req,res)=>{
     }
 
 })
+
+app.get("/get", async(res,res)=>{
+  const user = jwt.verify(req.headers.authorization.split(' ')[1], JWT_SECRET);
+  const userId = user._id;
+
+  const found = await User.findById({_id: userId});
+
+  if(!found) return res.status(411).json({msg: "User not found"})
+
+  const cardarr = await Cards.findMany({firstName: found.firstName});
+
+  return res.status(200).json({
+    msg: "successfully retrieved",
+    arr: cardarr
+  })
+
+  return res.status(200)
+})
 module.exports = router
