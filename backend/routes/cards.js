@@ -8,34 +8,33 @@ const authmiddleware = require("../middlewares/authmiddleware");
 
 const app = express();
 
-app.use(authmiddleware);
+router.use(authmiddleware);
 
 const addCards = zod.object({
   bname: zod.string(),
-  designation: zod.string(),
-  firstName: zod.string(),
-  lastName: zod.string(),
+  designation: zod.string(),  
   contact: zod.number(),
   webname: zod.string(),
   address: zod.string(),
 })
 
-app.post("/add", async (req,res) => {
+router.post("/add", async (req,res) => {
 
    const {success} = addCards.safeParse(req.body);
    if(!success){
     return res.status(411).json({
-      msg: "incorrect schema"
+      msg: "incorrect schema",
+      debug: req.body
     })
    }
 
    
    const user = jwt.verify(req.headers.authorization.split(' ')[1],JWT_SECRET);
-   const userId = user._id;
+   const userID = user.userId;
    try{
 
-    const {firstName, lastName} = await User.findOne({_id: userId}, "firstName lastName");
-      await Cards.create({
+      const {firstName, lastName} = await User.findOne({_id: userID},  { firstName: 1, lastName: 1, _id: 0 });
+      const card = await Cards.create({
           bname: req.body.bname,
           designation: req.body.designation,
           firstName: firstName,
@@ -45,11 +44,13 @@ app.post("/add", async (req,res) => {
           address: req.body.address
    })
 
-   return res.status(200).json({msg: "New card successfully created"})
+   return res.status(200).json({msg: "New card successfully created",
+    card: card
+   })
 
-   }catch(err){
-    return res.status(411).json({msg: err})
-   }
+   }catch (err) {
+    return res.status(411).json({msg: err.message});
+  }
 });
 
 const updateCards = zod.object({
@@ -63,60 +64,77 @@ const updateCards = zod.object({
   address: zod.string().optional(),
 })
 
-app.put("/update", async(req,res)=>{
+router.put("/update", async(req,res)=>{
     const {success} = updateCards.safeParse(req.body);
     if(!success){
       return res.status(411).json({msg: "incorrect input schema"});
     }
 
     try{
-      await Cards.updateOne(
-        {ogbname: req.body.ogbname},
-        {$set:{
-          bname: zod.string(),
-          designation: zod.string(),
-          firstName: zod.string(),
-          lastName: zod.string(),
-          contact: zod.number(),
-          webname: zod.string(),
-          address: zod.string(),
-        }}
+        await Cards.updateOne(
+        {bname: req.body.ogbname},
+        {$set: req.body}
       )
       return res.status(200).json({msg: "card updated succesfully"})
     }catch(err){
-      return res.status(411).json({msg: err})
+      return res.status(411).json({msg: err.message})
     }
 })
 
-app.put("/delete/:id", async(req,res)=>{
+router.delete("/delete/:bname", async (req, res) => {
+  try {
+    const bname = req.params.bname;
 
-    try{
-      const id = req.params.id;
+    const card = await Cards.findOne({ bname });
 
-      await Cards.findByIdAndDelete({_id: id});
-      return res.status(200).json({msg: "Card deleted succesfully"})
+    if (!card) {
+      return res.status(404).json({ 
+        message: "Card not found",
+        details: `No card exists with business name '${bname}'`
+      });
     }
-    catch(err){
-      return res.json({msg: err})
+
+    
+
+    const result = await Cards.deleteOne({ bname });
+    
+    if (result.deletedCount === 0) {
+      throw new Error("Deletion failed - no documents were deleted");
     }
 
-})
+    return res.status(200).json({
+      message: "Card deleted successfully",
+      deletedCard: {
+        bname: card.bname,
+        id: card._id
+      }
+    });
 
-app.get("/get", async(res,res)=>{
+  } catch (err) {
+    return res.status(411).json({  
+      message: err.message});
+  }
+});
+
+router.get("/get", async(req,res)=>{
   const user = jwt.verify(req.headers.authorization.split(' ')[1], JWT_SECRET);
-  const userId = user._id;
+  const userID = user.userId;
 
-  const found = await User.findById({_id: userId});
-
+  try{
+  const found = await User.findById(userID);
   if(!found) return res.status(411).json({msg: "User not found"})
 
-  const cardarr = await Cards.findMany({firstName: found.firstName});
+  const cardarr = await Cards.find({firstName: found.firstName});
 
   return res.status(200).json({
     msg: "successfully retrieved",
     arr: cardarr
   })
-
+}catch(err){
+  res.status(411).json({msg: err.message })
+}
 
 })
+
+
 module.exports = router

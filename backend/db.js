@@ -46,7 +46,7 @@ const CardsSchema = new mongoose.Schema({
 
   firstName: String,
 
-  lastname: String,
+  lastName: String,
 
   contact: {
     type: Number,

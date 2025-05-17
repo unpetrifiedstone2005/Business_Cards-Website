@@ -3,7 +3,7 @@ const zod = require("zod");
 const jwt = require("jsonwebtoken");
 const {User} = require("../db");
 const JWT_SECRET =  require("../config");
-const authmiddleware = require("./middlewares/authmiddleware");
+const authmiddleware = require("../middlewares/authmiddleware");
 const router = express.Router();
 
 const app = express();
@@ -39,7 +39,7 @@ router.post("/signup", async (req,res) => {
     username: body.username,
     password: body.password,
     firstName: body.firstName,
-    lastName: body.firstName
+    lastName: body.lastName
   })
 
   const userId = newUser._id;
@@ -62,7 +62,7 @@ const signinSchema = zod.object({
     password: zod.string()
 })
 
-app.post("/signin", async (req,res) => {
+router.post("/signin", async (req,res) => {
   const body = req.body;
   
   const {success} = signinSchema.safeParse(body);
@@ -103,7 +103,7 @@ const updatedSchema = zod.object({
   lastName: zod.string().optional()
 })
 
-app.put("/update", authmiddleware, async(req, res) => {
+router.put("/update", authmiddleware, async(req, res) => {
   
   const {success} = updatedSchema.safeParse(req.body);
 
@@ -122,6 +122,8 @@ app.put("/update", authmiddleware, async(req, res) => {
       lastName: req.body.lastName
     }}
   )
+
+  return res.status(200).json({msg:"updated successfully"});
   
 })
 
