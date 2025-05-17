@@ -6,7 +6,7 @@ const JWT_SECRET =  require("../config");
 const authmiddleware = require("./middlewares/authmiddleware");
 const router = express.Router();
 
-const app  = express();
+const app = express();
 
 const signupSchema = zod.object({
   username: zod.string(),
@@ -91,6 +91,37 @@ app.post("/signin", async (req,res) => {
     token: token
   })
   
+  
+})
+
+
+const updatedSchema = zod.object({
+  ogusername: zod.string(),
+  username: zod.string().optional(),
+  password: zod.string().optional(),
+  firstName: zod.string().optional(),
+  lastName: zod.string().optional()
+})
+
+app.put("/update", authmiddleware, async(req, res) => {
+  
+  const {success} = updatedSchema.safeParse(req.body);
+
+  if(!success){
+    return res.status(411).json({
+      msg: "incorrrect schema inputted"
+    })
+  }
+
+  await User.updateOne(
+    { username: req.body.ogusername},
+    {$set: {
+      username: req.body.username,
+      password: req.body.password,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName
+    }}
+  )
   
 })
 

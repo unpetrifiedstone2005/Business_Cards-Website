@@ -47,6 +47,11 @@ const CardsSchema = new mongoose.Schema({
   firstName: String,
 
   lastname: String,
+
+  contact: {
+    type: Number,
+    required: true
+  },
   
   webname: {
   type: String,
