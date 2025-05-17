@@ -117,6 +117,6 @@ app.get("/get", async(res,res)=>{
     arr: cardarr
   })
 
-  return res.status(200)
+
 })
 module.exports = router
