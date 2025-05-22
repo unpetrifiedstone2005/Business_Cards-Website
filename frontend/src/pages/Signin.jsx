@@ -3,6 +3,8 @@ import { Subheading } from "../components/Subheading"
 import { InputComponent } from "../components/InputComponent"
 import { Button } from "../components/Button"
 import bgimage from '../assets/signin-bg-image.jpg'
+import { Link } from "react-router-dom"
+
 
 export const Signin = () => {
     return <div 
@@ -14,7 +16,7 @@ export const Signin = () => {
             <Subheading label={"Don't have an account?"} buttonText={"Sign Up"} to={"/signup"}/>
             <InputComponent label={"Username"} placeholder={"John_Doe"} />
             <InputComponent label={"Password"} placeholder={"123456"} />
-            <Button label = {"Sign in"}/>
+            <Link to = {"/Dashboard"}><Button  label = {"Sign in"}/></Link>
           </div>
         </div>
 }

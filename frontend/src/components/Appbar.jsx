@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+
 export function Appbar(){
   return <div className="shadow-lg h-14 flex justify-between">
     <div className="flex flex-col font-medium justify-center h-full ml-4">
@@ -12,6 +14,9 @@ export function Appbar(){
         U
       </div>
     </div>
+    <div className="flex items-center px-3">
+      <Link to = {"/"}><button className="text-white bg-red-700 font-medium rounded px-2 py-1 hover:bg-red-800">Log out</button></Link>
+      </div>
     </div>
   </div>
 }
