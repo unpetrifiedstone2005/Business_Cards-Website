@@ -7,8 +7,8 @@ export function Appbar(){
       <div className="flex flex-col font-medium justify-center h-full mr-4">
         Welcome
       </div>
-    <div className="rounded-full h-12 w-12 bg-purple-200 mt-1 mr-2">
-      <div className="flex flex-col font-medium items-center justify-center h-full text-xl">
+    <div className="rounded-full h-12 w-12 bg-slate-600 mt-1 mr-2">
+      <div className="flex flex-col text-slate-200 font-medium items-center justify-center h-full text-xl">
         U
       </div>
     </div>
