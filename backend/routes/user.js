@@ -11,6 +11,7 @@ const app = express();
 const signupSchema = zod.object({
   username: zod.string(),
   password: zod.string(),
+  email: zod.string().email(),
   firstName: zod.string(),
   lastName: zod.string()
 })
@@ -38,6 +39,7 @@ router.post("/signup", async (req,res) => {
   const newUser = await User.create({
     username: body.username,
     password: body.password,
+    email: body.email,
     firstName: body.firstName,
     lastName: body.lastName
   })
@@ -96,32 +98,40 @@ router.post("/signin", async (req,res) => {
 
 
 const updatedSchema = zod.object({
-  ogusername: zod.string(),
   username: zod.string().optional(),
   password: zod.string().optional(),
+  email: zod.string().email().optional(),
   firstName: zod.string().optional(),
   lastName: zod.string().optional()
 })
 
 router.put("/update", authmiddleware, async(req, res) => {
-  
   const {success} = updatedSchema.safeParse(req.body);
-
   if(!success){
     return res.status(411).json({
       msg: "incorrrect schema inputted"
     })
   }
 
-  await User.updateOne(
-    { username: req.body.ogusername},
+  const user = jwt.verify(req.headers.authorization.split(' ')[1],JWT_SECRET);
+  const userID = user.userId;
+  const { username } = await User.findOne({_id: userID},{username: 1, _id: 0});
+
+  try{
+    await User.updateOne(
+    { username: username},
     {$set: {
       username: req.body.username,
       password: req.body.password,
+      email: req.body.email,
       firstName: req.body.firstName,
       lastName: req.body.lastName
     }}
-  )
+    )
+  }catch(err){
+    res.status(411).json({msg: err})
+  }
+  
 
   return res.status(200).json({msg:"updated successfully"});
   

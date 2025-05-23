@@ -15,6 +15,13 @@ const UserSchema = new mongoose.Schema({
   required: true,
   maxLength: 30,
   },
+  
+  email: {
+    type: String,
+    unique: true,
+    required: true
+  },
+
 
   firstName: {
   type: String,
@@ -47,6 +54,11 @@ const CardsSchema = new mongoose.Schema({
   firstName: String,
 
   lastName: String,
+
+  email: {
+    type: String,
+    required: true
+  },
 
   contact: {
     type: Number,

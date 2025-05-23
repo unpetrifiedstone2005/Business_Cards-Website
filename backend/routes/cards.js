@@ -12,7 +12,7 @@ router.use(authmiddleware);
 
 const addCards = zod.object({
   bname: zod.string(),
-  designation: zod.string(),  
+  designation: zod.string(),
   contact: zod.number(),
   webname: zod.string(),
   address: zod.string(),
@@ -33,13 +33,14 @@ router.post("/add", async (req,res) => {
    const userID = user.userId;
    try{
 
-      const {firstName, lastName} = await User.findOne({_id: userID},  { firstName: 1, lastName: 1, _id: 0 });
+      const {firstName, lastName, email} = await User.findOne({_id: userID},  { firstName: 1, lastName: 1, email:1,  _id: 0 });
       const card = await Cards.create({
           bname: req.body.bname,
           designation: req.body.designation,
           firstName: firstName,
           lastName: lastName,
           contact: req.body.contact,
+          email: email,
           webname: req.body.webname,
           address: req.body.address
    })
