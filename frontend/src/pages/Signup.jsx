@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom"
 export const Signup = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const navigate = useNavigate();
@@ -24,10 +25,13 @@ export const Signup = () => {
         <Subheading label={"Already have an account?"} buttonText={"Sign In"} to={"/"}/>
         <InputComponent onChange={e => {
           setUsername(e.target.value)
-        }} label={"Username"} placeholder={"John_Doe"} />
+        }} label={"Username"} placeholder={"arya_dg"} />
         <InputComponent onChange={e => {
           setPassword(e.target.value)
         }} label={"Password"} placeholder={"123456"} />
+        <InputComponent onChange={e => {
+          setEmail(e.target.value)
+        }} label={"Email"} placeholder={"arya@gmail.com"} />
         <InputComponent onChange={e => {
           setFirstName(e.target.value)
         }} label={"First Name"} placeholder={"John"} />
@@ -39,10 +43,12 @@ export const Signup = () => {
             const response = await axios.post('http://localhost:3000/api/v1/user/signup',{
             username,
             password,
+            email,
             firstName,
             lastName
           });
           localStorage.setItem("token",response.data.token)
+          const token = localStorage.getItem("token");
           navigate("/dashboard")
           }
           catch(err){

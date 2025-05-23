@@ -34,11 +34,14 @@ export const Signin = () => {
                   username,
                   password
                 })
+                localStorage.setItem("token",response.data.token)
+                const token = localStorage.getItem("token");
                 navigate("/Dashboard")
               }
+
               catch(err){
                 console.error("Sign in failed:", err.message);
-                alert("Signin failed. Please check your input or try again later.");
+                alert("Signin failed. Are you sure you have an account?");
               }
             }} label = {"Sign in"}/>
           </div>
