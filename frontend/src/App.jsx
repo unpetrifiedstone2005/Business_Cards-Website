@@ -1,22 +1,47 @@
-import { useState } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { Signup } from "./pages/Signup"
-import { Signin } from "./pages/Signin"
-import { Dashboard } from "./pages/Dashboard"
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { NotFound } from './pages/NotFound';
+import { Signin } from './pages/Signin';
+import { Signup } from './pages/Signup';
+import { Dashboard } from './pages/Dashboard';
+import { ProtectedRoute } from './pages/ProtectedRoute';
+import { PublicRoute } from './pages/PublicRoute';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <BrowserRouter>
-    <Routes>
-      <Route path = "/" element = {<Signin/>} />
-      <Route path = "/signup" element = {<Signup/>} />
-      <Route path = "/dashboard" element = {<Dashboard/>} />
-    </Routes>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <Signin />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <Signup />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+      <Route path="*" element={<NotFound />} />
+
+      </Routes>
+      
+      
+
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
