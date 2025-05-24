@@ -5,10 +5,12 @@ export function Cards({ initialData, triggerRefetch }) {
   const [editField, setEditField] = useState(null);
   const [del, setDel] = useState(null);
   const [data, setData] = useState(initialData);
+  const [prevValue, setPrevValue] = useState(null);
 
   const handleDoubleClick = (field) => {
     if (field !== "firstName" && field !== "lastName" && field !== "email") {
       setEditField(field);
+      setPrevValue(data[field]); 
     }
   };
 
@@ -17,8 +19,15 @@ export function Cards({ initialData, triggerRefetch }) {
   };
 
   const handleBlur = async () => {
+    const token = localStorage.getItem("token");
     try {
-      await axios.put("http://localhost:3000/api/v1/cards/update", { ...data });
+      await axios.put("http://localhost:3000/api/v1/cards/update", { ...data },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     } catch (err) {
       alert("Field not edited: " + err.message);
     } finally {

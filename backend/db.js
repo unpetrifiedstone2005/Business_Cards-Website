@@ -68,8 +68,9 @@ const CardsSchema = new mongoose.Schema({
   },
 
   contact: {
-    type: Number,
-    required: true
+    type: String,
+    required: true,
+    maxLength: 12
   },
   
   webname: {

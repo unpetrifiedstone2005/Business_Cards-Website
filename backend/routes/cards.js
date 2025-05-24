@@ -13,7 +13,7 @@ router.use(authmiddleware);
 const addCards = zod.object({
   bname: zod.string(),
   designation: zod.string(),
-  contact: zod.number(),
+  contact: zod.string(),
   webname: zod.string(),
   address: zod.string(),
 })
@@ -60,7 +60,7 @@ const updateCards = zod.object({
   designation: zod.string().optional(),
   firstName: zod.string().optional(),
   lastName: zod.string().optional(),
-  contact: zod.number().optional(),
+  contact: zod.string().optional(),
   webname: zod.string().optional(),
   address: zod.string().optional(),
 })
