@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { useState } from "react";
 import axios from "axios";
 
-export function Appbar(){
+export function Appbar({triggerRefetch}){
   const [showModal, setShowModal] = useState(false);
   const [editUser, setEditUser] = useState(false);
   const [username, setUsername] = useState("");
@@ -14,11 +14,11 @@ export function Appbar(){
   const navigate = useNavigate();
 
   return <div className="shadow-lg h-14 flex justify-between">
-    <div className="flex flex-col font-xl font-medium justify-center h-full ml-4">
+    <div className="flex flex-col font-xl font-bold justify-center h-full ml-4">
         Business Cards 
     </div>
     <div className="flex">
-      <div className="flex flex-col font-xl font-medium justify-center h-full mr-4">
+      <div className="flex flex-col font-xl font-bold justify-center h-full mr-4">
         Welcome
       </div>
       <button onClick={()=>{
@@ -108,6 +108,7 @@ export function Appbar(){
                   setEditUser(false)
                   setUsername("")
                   setPassword("")
+                  setEmail("")
                   setFirstName("")
                   setLastName("")
                 }}
@@ -122,6 +123,7 @@ export function Appbar(){
                     const payload = {};
                     if (username.trim() !== "") payload.username = username;
                     if (password.trim() !== "") payload.password = password;
+                    if (email.trim() !== "") payload.email = email;
                     if (firstName.trim() !== "") payload.firstName = firstName;
                     if (lastName.trim() !== "") payload.lastName = lastName;
                     const response = await axios.put("http://localhost:3000/api/v1/user/update",payload,
@@ -131,17 +133,31 @@ export function Appbar(){
                         "Content-Type": "application/json",
                       },
                     })
+
+                    const response2 = await axios.put("http://localhost:3000/api/v1/cards/update", {
+                        firstName: payload.firstName,
+                        lastName: payload.lastName,
+                        email: payload.email
+                    },{
+                       headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                      },
+                    })
+
                   }
                   catch(err){
                     console.log("User could not be updated: ", err);
-                    alert("USer could not be updated")
+                    alert("User could not be updated")
                   }
                   finally{
                     setUsername("")
                     setPassword("")
                     setFirstName("")
+                    setEmail("")
                     setLastName("")
                     setEditUser(false);
+                    triggerRefetch();
                   }
                   
                 }}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-export function Searchbar() {
+export function Subbar({triggerRefetch}) {
   const [showModal, setShowModal] = useState(false);
   const [businessName, setBusinessName] = useState("");
   const [designation, setDesignation] = useState("");
@@ -12,21 +12,14 @@ export function Searchbar() {
   return (
     <div>
       <div className="flex items-center justify-between px-4 mt-6">
-        <div className="font-bold text-lg">Cards</div>
+        <div className="font-bold text-xl">Cards</div>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-blue-500 text-md font-medium text-white px-2 py-1 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-md font-medium text-white px-3 py-1 rounded hover:bg-blue-600"
         >
           Add
         </button>
-      </div>
-      <div className="my-2 px-5">
-        <input
-          type="text"
-          placeholder="Search cards..."
-          className="w-full px-2 py-1 border bg-slate-200 rounded border-purple-200"
-        />
-      </div>
+      </div><br/>
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
@@ -122,6 +115,7 @@ export function Searchbar() {
                     setWebsiteName("")
                     setAddress("")
                     setShowModal(false);
+                    triggerRefetch();
                   }
                   
                 }}
