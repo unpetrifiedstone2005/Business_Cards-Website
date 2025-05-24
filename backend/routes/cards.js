@@ -35,6 +35,7 @@ router.post("/add", async (req,res) => {
 
       const {firstName, lastName, email} = await User.findOne({_id: userID},  { firstName: 1, lastName: 1, email:1,  _id: 0 });
       const card = await Cards.create({
+          userId: userID,
           bname: req.body.bname,
           designation: req.body.designation,
           firstName: firstName,
@@ -55,7 +56,6 @@ router.post("/add", async (req,res) => {
 });
 
 const updateCards = zod.object({
-  ogbname: zod.string(),
   bname: zod.string().optional(),
   designation: zod.string().optional(),
   firstName: zod.string().optional(),
@@ -71,9 +71,12 @@ router.put("/update", async(req,res)=>{
       return res.status(411).json({msg: "incorrect input schema"});
     }
 
+    const user = jwt.verify(req.headers.authorization.split(' ')[1],JWT_SECRET);
+    const userID = user.userId;
+
     try{
-        await Cards.updateOne(
-        {bname: req.body.ogbname},
+        await Cards.updateMany(
+        {userId: userID},
         {$set: req.body}
       )
       return res.status(200).json({msg: "card updated succesfully"})
@@ -82,22 +85,21 @@ router.put("/update", async(req,res)=>{
     }
 })
 
-router.delete("/delete/:bname", async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   try {
-    const bname = req.params.bname;
+    const id = req.params.id;
 
-    const card = await Cards.findOne({ bname });
+    const card = await Cards.findById(id);
 
     if (!card) {
       return res.status(404).json({ 
-        message: "Card not found",
-        details: `No card exists with business name '${bname}'`
+        message: "Card not found"
       });
     }
 
     
 
-    const result = await Cards.deleteOne({ bname });
+    const result = await Cards.deleteOne({ _id: id });
     
     if (result.deletedCount === 0) {
       throw new Error("Deletion failed - no documents were deleted");
@@ -106,8 +108,8 @@ router.delete("/delete/:bname", async (req, res) => {
     return res.status(200).json({
       message: "Card deleted successfully",
       deletedCard: {
-        bname: card.bname,
-        id: card._id
+        id: card._id,
+        bname: card.bname
       }
     });
 
@@ -117,25 +119,27 @@ router.delete("/delete/:bname", async (req, res) => {
   }
 });
 
-router.get("/get", async(req,res)=>{
-  const user = jwt.verify(req.headers.authorization.split(' ')[1], JWT_SECRET);
-  const userID = user.userId;
+router.get("/get", async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(' ')[1];
+    const user = jwt.verify(token, JWT_SECRET);
+    const userID = user.userId;
 
-  try{
-  const found = await User.findById(userID);
-  if(!found) return res.status(411).json({msg: "User not found"})
+    const found = await User.findById(userID);
+    if (!found) return res.status(411).json({ msg: "User not found" });
 
-  const cardarr = await Cards.find({firstName: found.firstName});
-
-  return res.status(200).json({
-    msg: "successfully retrieved",
-    arr: cardarr
-  })
-}catch(err){
-  res.status(411).json({msg: err.message })
-}
-
-})
+      const cardarr = await Cards.find({userId: userID});
+      
+   
+    return res.status(200).json({
+      msg: "successfully retrieved",
+      arr: cardarr
+    });
+  } catch (err) {
+    console.error("Error in /get:", err);
+    res.status(500).json({ msg: err.message });
+  }
+});
 
 
 module.exports = router

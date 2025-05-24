@@ -41,6 +41,13 @@ const UserSchema = new mongoose.Schema({
 
 
 const CardsSchema = new mongoose.Schema({
+
+  userId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "User",
+  required: true
+  },
+
   bname: {
   type: String,
   required: true,
