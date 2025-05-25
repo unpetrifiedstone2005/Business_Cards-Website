@@ -50,7 +50,7 @@ export function Subbar({triggerRefetch}) {
               className="w-full border rounded px-3 py-2 mb-4"
               value={contact}
               onChange = {(e)=>{
-                setContact(Number(e.target.value))
+                setContact(e.target.value)
               }}
             />
             <input
