@@ -40,7 +40,7 @@ export const Signup = () => {
         }} label={"Last Name"} placeholder={"Doe"} />
         <Button label={"Sign up"} onClick = {async()=>{
           try{
-            const response = await axios.post('http://localhost:3000/api/v1/user/signup',{
+            const response = await axios.post('http://3.107.76.182:3000/api/v1/user/signup',{
             username,
             password,
             email,
