@@ -21,7 +21,7 @@ export function Cards({ initialData, triggerRefetch }) {
   const handleBlur = async () => {
     const token = localStorage.getItem("token");
     try {
-      await axios.put("http://localhost:3000/api/v1/cards/update", { ...data },
+      await axios.put("http://3.107.76.182:3000/api/v1/cards/update", { ...data },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -133,7 +133,7 @@ export function Cards({ initialData, triggerRefetch }) {
                   <button onClick={async()=>{
                     const token = localStorage.getItem("token");
                     try {
-                      await axios.delete(`http://localhost:3000/api/v1/cards/delete/`+ initialData.id, {
+                      await axios.delete(`http://3.107.76.182:3000/api/v1/cards/delete/`+ initialData.id, {
                         headers: {
                           Authorization: `Bearer ${token}`,
                         },
