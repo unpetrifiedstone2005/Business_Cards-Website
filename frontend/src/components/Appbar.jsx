@@ -134,7 +134,7 @@ export function Appbar({triggerRefetch}){
                       },
                     })
 
-                    const response2 = await axios.put("http://3.107.76.182:3000/api/v1/cards/update", {
+                    const response2 = await axios.put("http://localhost:3000/api/v1/cards/update", {
                         firstName: payload.firstName,
                         lastName: payload.lastName,
                         email: payload.email
