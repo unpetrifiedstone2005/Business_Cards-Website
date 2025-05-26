@@ -11,7 +11,7 @@ export const Dashboard = () => {
   const fetchCards = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://3.107.76.182:3000/api/v1/cards/get", {
+      const response = await axios.get("http://localhost:3000/api/v1/cards/get", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
