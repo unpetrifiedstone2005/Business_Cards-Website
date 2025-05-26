@@ -90,7 +90,7 @@ export function Subbar({triggerRefetch}) {
                 onClick={async() => {
                   try{
                     const token = localStorage.getItem("token");
-                    const response = await axios.post("http://3.107.76.182:3000/api/v1/cards/add",{
+                    const response = await axios.post("http://localhost:3000/api/v1/cards/add",{
                         bname: businessName,
                         designation,
                         contact,
